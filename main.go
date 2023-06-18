@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	//"github.com/AnomalyFi/hypersdk/chain"
+	"github.com/AnomalyFi/hypersdk/chain"
 	"github.com/AnomalyFi/hypersdk/crypto"
 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/actions"
 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/auth"
@@ -46,16 +46,15 @@ func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) 
 	}
 	fmt.Println(acc)
 
-	// _, terr := BuildAndSignTx(nkchainID, account.rsender, tx, []byte(ChainID), account.factory, cli)
-	// if terr != nil {
-	// 	return err
-	// }
+	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(ChainID), acc.factory, cli, tcli)
+	if terr != nil {
+		return err
+	}
 
 	return nil
 }
 
 func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (*account, error) {
-	//TODO need to fund these accounts
 	tpriv, err := crypto.GeneratePrivateKey()
 	if err != nil {
 		return nil, err
@@ -84,7 +83,7 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 		&actions.Transfer{
 			To:    acc.rsender,
 			Asset: ids.Empty,
-			Value: i64, // ensure we don't produce same tx
+			Value: 1000 + i64, // ensure we don't produce same tx
 		},
 		factory,
 	)
@@ -108,28 +107,37 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 	return acc, nil
 }
 
-// func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient) (ids.ID, error) {
-// 	tx := chain.NewTx(
-// 		&chain.Base{
-// 			Timestamp: time.Now().Unix() + 100_000,
-// 			ChainID:   chainID,
-// 			UnitPrice: 1,
-// 		},
-// 		nil,
-// 		&actions.SequencerMsg{
-// 			Data:        data,
-// 			ChainId:     chainid,
-// 			FromAddress: to,
-// 		},
-// 	)
-// 	tx, err := tx.Sign(factory, consts.ActionRegistry, consts.AuthRegistry)
-// 	verify := tx.AuthAsyncVerify()
-// 	if verify != nil {
-// 		return nil, nil
-// 	}
-// 	_, err = cli.SubmitTx(context.TODO(), tx.Bytes())
-// 	return tx.ID(), err
-// }
+func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (ids.ID, error) {
+	parser, err := tcli.Parser(context.TODO())
+	submit, tx, fee, err := cli.GenerateTransaction(
+		context.Background(),
+		parser,
+		nil,
+		&actions.SequencerMsg{
+			Data:        data,
+			ChainId:     chainid,
+			FromAddress: to,
+		},
+		factory,
+	)
+	if err != nil {
+		fmt.Errorf("It failed", err)
+		return ids.Empty, err
+	}
+
+	fmt.Println(submit)
+	fmt.Println(tx)
+	fmt.Println(fee)
+
+	submit(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	success, err := tcli.WaitForTransaction(ctx, tx.ID())
+	cancel()
+	if success == true {
+		fmt.Println("SUCCESS")
+	}
+	return tx.ID(), err
+}
 
 func main() {
 	err := BuildAndSendTransaction("http://192.168.0.230:64204/ext/bc/2GVP5faTRBGtYDJF6VWNHUgqfzP3PgYt1JZNd5JcBzVnyUiSta", "test", []byte("2"))
