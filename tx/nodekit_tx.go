@@ -1,113 +1,143 @@
-// package tx
+package tx
 
-// import (
-// 	"context"
-// 	"time"
+import (
+	"context"
+	"fmt"
+	"time"
 
-// 	"github.com/AnomalyFi/hypersdk/chain"
-// 	"github.com/AnomalyFi/hypersdk/crypto"
-// 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/actions"
-// 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/auth"
-// 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/consts"
-// 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/utils"
-// 	"github.com/AnomalyFi/hypersdk/rpc"
-// 	"github.com/ava-labs/avalanchego/ids"
-// )
+	"github.com/AnomalyFi/hypersdk/chain"
+	"github.com/AnomalyFi/hypersdk/crypto"
+	"github.com/AnomalyFi/hypersdk/examples/tokenvm/actions"
+	"github.com/AnomalyFi/hypersdk/examples/tokenvm/auth"
+	trpc "github.com/AnomalyFi/hypersdk/examples/tokenvm/rpc"
+	"github.com/AnomalyFi/hypersdk/examples/tokenvm/utils"
+	"github.com/AnomalyFi/hypersdk/rpc"
+	"github.com/ava-labs/avalanchego/ids"
+)
 
-// const (
-// 	//TODO fix this
-// 	nkchainID              = ids.FromString("qPKuaWFeaFytxhh6sxV4DtsAsWoJZrWsKWfWi5wWayvNSbfV2")
-// 	DefaultJSONRPCEndpoint = "http://192.168.0.230:26869/ext/bc/qPKuaWFeaFytxhh6sxV4DtsAsWoJZrWsKWfWi5wWayvNSbfV2"
-// )
+const (
+	//TODO fix this
+	DefaultJSONRPCEndpoint = "http://127.0.0.1:9650/ext/bc/2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr"
+)
 
-// type account struct {
-// 	priv    crypto.PrivateKey
-// 	factory *auth.ED25519Factory
-// 	rsender crypto.PublicKey
-// 	sender  string
-// }
+type account struct {
+	priv    crypto.PrivateKey
+	factory *auth.ED25519Factory
+	rsender crypto.PublicKey
+	sender  string
+}
 
-// // BuildAndSendTransaction builds and sends a transaction to the NodeKit Subnet with the given chain ID and transaction bytes.
-// func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) error {
-// 	cli := rpc.NewJSONRPCClient(DefaultJSONRPCEndpoint)
-// 	account, err := CreateAccount(nkchainID, cli)
-// 	if err != nil {
-// 		return err
-// 	}
+// BuildAndSendTransaction builds and sends a transaction to the NodeKit Subnet with the given chain ID and transaction bytes.
+func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) error {
+	nkchainID, err := ids.FromString("2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr")
 
-// 	_, terr := BuildAndSignTx(nkchainID, account.rsender, tx, []byte(ChainID), account.factory, cli)
-// 	if terr != nil {
-// 		return err
-// 	}
+	if err != nil {
+		return err
+	}
+	fmt.Println("here")
+	cli := rpc.NewJSONRPCClient(DefaultJSONRPCEndpoint)
+	tcli := trpc.NewJSONRPCClient(DefaultJSONRPCEndpoint, nkchainID)
 
-// 	return nil
-// }
+	acc, err := CreateAccount(nkchainID, cli, tcli)
+	fmt.Printf("here3\n")
 
-// func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient) (*account, error) {
-// 	//TODO need to fund these accounts
-// 	tpriv, err := crypto.GeneratePrivateKey()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	trsender := tpriv.PublicKey()
-// 	tsender := utils.Address(trsender)
-// 	acc := &account{tpriv, auth.NewED25519Factory(tpriv), trsender, tsender}
-// 	amount := 1
-// 	var i64 uint64
-// 	i64 = uint64(amount)
+	if err != nil {
+		return err
+	}
+	fmt.Println(acc)
 
-// 	tx := chain.NewTx(
-// 		&chain.Base{
-// 			Timestamp: time.Now().Unix() + 100_000,
-// 			ChainID:   chainID,
-// 			UnitPrice: 1,
-// 		},
-// 		nil,
-// 		&actions.Transfer{
-// 			To:    acc.rsender,
-// 			Value: i64,
-// 		},
-// 	)
-// 	priv, err := crypto.HexToKey(
-// 		"323b1d8f4eed5f0da9da93071b034f2dce9d2d22692c172f3cb252a64ddfafd01b057de320297c29ad0c1f589ea216869cf1938d88c9fbd70d6748323dbf2fa7", //nolint:lll
-// 	)
-// 	factory := auth.NewED25519Factory(priv)
-// 	txSigned, err := tx.Sign(factory, consts.ActionRegistry, consts.AuthRegistry)
-// 	verify := txSigned.AuthAsyncVerify()
-// 	if verify != nil {
-// 		return nil, nil
-// 	}
-// 	_, err = cli.SubmitTx(context.TODO(), txSigned.Bytes())
-// 	return acc, nil
-// }
+	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(ChainID), acc.factory, cli, tcli)
+	if terr != nil {
+		return err
+	}
 
-// func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient) (ids.ID, error) {
-// 	tx := chain.NewTx(
-// 		&chain.Base{
-// 			Timestamp: time.Now().Unix() + 100_000,
-// 			ChainID:   chainID,
-// 			UnitPrice: 1,
-// 		},
-// 		nil,
-// 		&actions.SequencerMsg{
-// 			Data:        data,
-// 			ChainId:     chainid,
-// 			FromAddress: to,
-// 		},
-// 	)
-// 	tx, err := tx.Sign(factory, consts.ActionRegistry, consts.AuthRegistry)
-// 	verify := tx.AuthAsyncVerify()
-// 	if verify != nil {
-// 		return nil, nil
-// 	}
-// 	_, err = cli.SubmitTx(context.TODO(), tx.Bytes())
-// 	return tx.ID(), err
-// }
+	return nil
+}
 
-// func main() {
-// 	err := BuildAndSendTransaction("http://192.168.0.230:26869/ext/bc/qPKuaWFeaFytxhh6sxV4DtsAsWoJZrWsKWfWi5wWayvNSbfV2", "test", []byte("2"))
-// 	if err != nil {
-// 		panic(err)
-// 	}
+func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (*account, error) {
+	tpriv, err := crypto.GeneratePrivateKey()
+	if err != nil {
+		return nil, err
+	}
+	trsender := tpriv.PublicKey()
+	tsender := utils.Address(trsender)
+	acc := &account{tpriv, auth.NewED25519Factory(tpriv), trsender, tsender}
+	amount := 1
+	var i64 uint64
+	i64 = uint64(amount)
 
-// }
+	priv, err := crypto.HexToKey(
+		"323b1d8f4eed5f0da9da93071b034f2dce9d2d22692c172f3cb252a64ddfafd01b057de320297c29ad0c1f589ea216869cf1938d88c9fbd70d6748323dbf2fa7", //nolint:lll
+	)
+	factory := auth.NewED25519Factory(priv)
+	parser, err := tcli.Parser(context.TODO())
+
+	if err != nil {
+		return nil, err
+	}
+
+	//TODO to implement payable by another account I just need to create a
+	//new type of Auth that has the payer as the account I create with hyperlane and then create a new factory of that new auth type to sign this transaction
+
+	submit, tx, fee, err := cli.GenerateTransaction(
+		context.Background(),
+		parser,
+		nil,
+		&actions.Transfer{
+			To:    acc.rsender,
+			Asset: ids.Empty,
+			Value: 1000 + i64, // ensure we don't produce same tx
+		},
+		factory,
+	)
+	if err != nil {
+		fmt.Errorf("It failed", err)
+		return nil, err
+	}
+
+	fmt.Println(submit)
+	fmt.Println(tx)
+	fmt.Println(fee)
+
+	submit(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	success, err := tcli.WaitForTransaction(ctx, tx.ID())
+	cancel()
+	if success == true {
+		fmt.Println("SUCCESS")
+	}
+
+	return acc, nil
+}
+
+func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (ids.ID, error) {
+	parser, err := tcli.Parser(context.TODO())
+	submit, tx, fee, err := cli.GenerateTransaction(
+		context.Background(),
+		parser,
+		nil,
+		&actions.SequencerMsg{
+			Data:        data,
+			ChainId:     chainid,
+			FromAddress: to,
+		},
+		factory,
+	)
+	if err != nil {
+		fmt.Errorf("It failed", err)
+		return ids.Empty, err
+	}
+
+	fmt.Println(submit)
+	fmt.Println(tx)
+	fmt.Println(fee)
+
+	submit(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	success, err := tcli.WaitForTransaction(ctx, tx.ID())
+	cancel()
+	if success == true {
+		fmt.Println("SUCCESS")
+	}
+	return tx.ID(), err
+}
