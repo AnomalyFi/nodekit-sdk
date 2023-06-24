@@ -1,1 +1,1 @@
-The server and tx packages are used heavily by AnomalyFi Geth. They are subject to change.
+The server and tx packages are used heavily by AnomalyFi Geth. They are subject to change. If you add a new method it needs to be added in structs folder.
