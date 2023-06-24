@@ -7,6 +7,7 @@ require (
 	github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230618162152-33c6ea8470bd
 	github.com/ava-labs/avalanchego v1.10.1
 	github.com/ethereum/go-ethereum v1.12.0
+	google.golang.org/grpc v1.56.0
 )
 
 require (
@@ -108,7 +109,6 @@ require (
 	google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
-	google.golang.org/grpc v1.56.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect

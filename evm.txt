@@ -1,1 +1,1 @@
-The server and tx packages are used heavily by AnomalyFi Geth
+The server and tx packages are used heavily by AnomalyFi Geth. They are subject to change.
