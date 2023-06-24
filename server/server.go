@@ -8,10 +8,21 @@ import (
 	"fmt"
 	"time"
 
+	executionv1 "github.com/AnomalyFi/nodekit-sdk/structs"
+
 	"github.com/AnomalyFi/hypersdk/examples/tokenvm/actions"
 	trpc "github.com/AnomalyFi/hypersdk/examples/tokenvm/rpc"
 	"github.com/AnomalyFi/hypersdk/rpc"
 	"github.com/ava-labs/avalanchego/ids"
+
+	"github.com/ethereum/go-ethereum/beacon/engine"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/eth/catalyst"
+	"github.com/ethereum/go-ethereum/log"
+
 	"github.com/ethereum/go-ethereum/beacon/engine"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -23,16 +34,12 @@ import (
 
 // executionServiceServer is the implementation of the ExecutionServiceServer interface.
 type ExecutionServiceServer struct {
+	executionv1.UnimplementedExecutionServiceServer
+
 	consensus      *catalyst.ConsensusAPI
 	eth            *eth.Ethereum
 	bc             *core.BlockChain
 	executionState []byte
-}
-
-type DoBlockRequest struct {
-	PrevStateRoot []byte   `protobuf:"bytes,1,opt,name=prev_state_root,json=prevStateRoot,proto3" json:"prev_state_root,omitempty"`
-	Transactions  [][]byte `protobuf:"bytes,2,rep,name=transactions,proto3" json:"transactions,omitempty"`
-	Timestamp     int64
 }
 
 func NewExecutionServiceServer(eth *eth.Ethereum) *ExecutionServiceServer {
@@ -101,7 +108,7 @@ func (s *ExecutionServiceServer) WSBlock(JSONRPCEndpoint string, chainID ids.ID,
 
 }
 
-func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *DoBlockRequest) error {
+func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.DoBlockRequest) error {
 	log.Info("DoBlock called request", "request", req)
 	prevHeadHash := common.BytesToHash(req.PrevStateRoot)
 
