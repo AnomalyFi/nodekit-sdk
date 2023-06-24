@@ -5,6 +5,9 @@ import (
 
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+
+	"github.com/AnomalyFi/hypersdk/rpc"
+	"github.com/ava-labs/avalanchego/ids"
 )
 
 type DoBlockRequest struct {
@@ -20,6 +23,7 @@ type ExecutionServiceServer interface {
 	InitState() ([]byte, error)
 	DoBlock(context.Context, *DoBlockRequest) error
 	FinalizeBlock(context.Context, []byte) error
+	WSBlock(string, ids.ID, context.Context, *rpc.WebSocketClient) error
 }
 
 type UnimplementedExecutionServiceServer struct {
@@ -33,4 +37,8 @@ func (UnimplementedExecutionServiceServer) DoBlock(context.Context, *DoBlockRequ
 }
 func (UnimplementedExecutionServiceServer) FinalizeBlock(context.Context, []byte) error {
 	return status.Errorf(codes.Unimplemented, "method FinalizeBlock not implemented")
+}
+
+func (UnimplementedExecutionServiceServer) WSBlock(string, ids.ID, context.Context, *rpc.WebSocketClient) error {
+	return status.Errorf(codes.Unimplemented, "method WSBlock not implemented")
 }
