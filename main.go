@@ -17,7 +17,7 @@ import (
 
 const (
 	//TODO fix this
-	DefaultJSONRPCEndpoint = "http://192.168.0.230:64204/ext/bc/2GVP5faTRBGtYDJF6VWNHUgqfzP3PgYt1JZNd5JcBzVnyUiSta"
+	DefaultJSONRPCEndpoint = "http://127.0.0.1:9650/ext/bc/2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr"
 )
 
 type account struct {
@@ -29,7 +29,7 @@ type account struct {
 
 // BuildAndSendTransaction builds and sends a transaction to the NodeKit Subnet with the given chain ID and transaction bytes.
 func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) error {
-	nkchainID, err := ids.FromString("2GVP5faTRBGtYDJF6VWNHUgqfzP3PgYt1JZNd5JcBzVnyUiSta")
+	nkchainID, err := ids.FromString("2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr")
 
 	if err != nil {
 		return err
@@ -75,6 +75,9 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 	if err != nil {
 		return nil, err
 	}
+
+	//TODO to implement payable by another account I just need to create a
+	//new type of Auth that has the payer as the account I create with hyperlane and then create a new factory of that new auth type to sign this transaction
 
 	submit, tx, fee, err := cli.GenerateTransaction(
 		context.Background(),
