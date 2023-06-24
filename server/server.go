@@ -87,7 +87,7 @@ func (s *ExecutionServiceServer) WSBlock(JSONRPCEndpoint string, chainID ids.ID,
 		n := len(txs)
 		if n > 0 {
 			//TODO need to look at Block object structure in hypersdk
-			s.DoBlock(context.TODO(), &DoBlockRequest{
+			s.DoBlock(context.TODO(), &executionv1.DoBlockRequest{
 				PrevStateRoot: s.executionState,
 				Transactions:  txs,
 				Timestamp:     blk.Tmstmp,
