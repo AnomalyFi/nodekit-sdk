@@ -1,4 +1,4 @@
-package tx
+package server
 
 //TODO this is the code I need to modify the most for the websocket implementation to work
 // It will not be a server anymore but will instead just be the methods I call to start the node
