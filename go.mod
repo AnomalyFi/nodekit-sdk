@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AnomalyFi/hypersdk v0.5.0
 	github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230618162152-33c6ea8470bd
-	github.com/ava-labs/avalanchego v1.10.3
+	github.com/ava-labs/avalanchego v1.10.1
 )
 
 require (
@@ -28,6 +28,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
 	github.com/onsi/ginkgo/v2 v2.11.0 // indirect
+	github.com/openzipkin/zipkin-go v0.4.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
@@ -41,6 +42,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.16.0 // indirect
+	go.opentelemetry.io/otel/exporters/zipkin v1.11.2 // indirect
 	go.opentelemetry.io/otel/metric v1.16.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
