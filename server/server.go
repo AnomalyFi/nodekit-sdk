@@ -50,8 +50,11 @@ func NewExecutionServiceServer(eth *eth.Ethereum) *ExecutionServiceServer {
 }
 
 func (s *ExecutionServiceServer) WSBlock(JSONRPCEndpoint string, chainID ids.ID, ctx context.Context, websocketClient *rpc.WebSocketClient) error {
+	fmt.Println("GOT IN")
 	executionState, err := s.InitState()
 	s.executionState = executionState
+
+	fmt.Println("Execution State Completed")
 
 	cli := trpc.NewJSONRPCClient(JSONRPCEndpoint, chainID)
 	if err := websocketClient.RegisterBlocks(); err != nil {
@@ -78,20 +81,30 @@ func (s *ExecutionServiceServer) WSBlock(JSONRPCEndpoint string, chainID ids.ID,
 				switch action := tx.Action.(type) {
 				case *actions.SequencerMsg:
 					//TODO this should add the relevant transactions from a block and then call DoBlock to execute them.
+					fmt.Println(action.ChainId)
+					fmt.Println(tempchainId)
 					if bytes.Equal(action.ChainId, tempchainId) {
+						fmt.Println("FOUND TRANSACTIONS FROM HYPERSDK")
 						txs = append(txs, action.Data)
 					}
 				}
 			}
 		}
+		fmt.Println("GOT TRANSACTIONS FROM HYPERSDK")
+
 		n := len(txs)
 		if n > 0 {
+			fmt.Println("Submitted TRANSACTIONS FROM HYPERSDK")
 			//TODO need to look at Block object structure in hypersdk
-			s.DoBlock(context.TODO(), &executionv1.DoBlockRequest{
+			err = s.DoBlock(context.TODO(), &executionv1.DoBlockRequest{
 				PrevStateRoot: s.executionState,
 				Transactions:  txs,
 				Timestamp:     blk.Tmstmp,
 			})
+			if err != nil {
+				log.Error("failed to DoBlock", "err", err)
+				return err
+			}
 		}
 
 	}
@@ -106,6 +119,8 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 
 	// The Engine API has been modified to use transactions from this mempool and abide by it's ordering.
 	s.eth.TxPool().SetNodeKitOrdered(req.Transactions)
+
+	log.Info("DoBlock ordered Transactions", "transactions", req.Transactions)
 
 	// Do the whole Engine API in a single loop
 	startForkChoice := &engine.ForkchoiceStateV1{
@@ -123,6 +138,8 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 		return err
 	}
 
+	log.Info("DoBlock ForkChoice Updated", "request", req)
+
 	// super janky but this is what the payload builder requires :/ (miner.worker.buildPayload())
 	// we should probably just execute + store the block directly instead of using the engine api.
 	time.Sleep(time.Second)
@@ -131,16 +148,20 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 		log.Error("failed to call GetPayloadV1", "err", err)
 		return err
 	}
+	log.Info("DoBlock called GetPayloadV1", "request", req)
 
 	// call blockchain.InsertChain to actually execute and write the blocks to state
 	block, err := engine.ExecutableDataToBlock(*payloadResp)
 	if err != nil {
 		return err
 	}
+	log.Info("DoBlock called ExecutableDataToBlock", "request", req)
+
 	blocks := types.Blocks{
 		block,
 	}
 	n, err := s.bc.InsertChain(blocks)
+	log.Info("DoBlock called InsertChain")
 	if err != nil {
 		return err
 	}
@@ -154,12 +175,18 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 	}
 
 	finalizedBlock := s.bc.CurrentFinalBlock()
+
+	log.Info("DoBlock called CurrentFinalBlock", "request", req)
+
 	newForkChoice := &engine.ForkchoiceStateV1{
 		HeadBlockHash:      block.Hash(),
 		SafeBlockHash:      block.Hash(),
 		FinalizedBlockHash: finalizedBlock.Hash(),
 	}
 	fcEndResp, err := s.consensus.ForkchoiceUpdatedV1(*newForkChoice, nil)
+
+	log.Info("DoBlock called ForkchoiceUpdatedV1 again", "request", req)
+
 	if err != nil {
 		log.Error("failed to call ForkchoiceUpdatedV1", "err", err)
 		return err
@@ -180,12 +207,15 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 
 //TODO might be able to combine Finalize Block into DoBlock because once the block comes through WS it is completely finalized
 func (s *ExecutionServiceServer) FinalizeBlock(ctx context.Context, BlockHash []byte) error {
+	log.Info("Got to Finalize Block")
 	header := s.bc.GetHeaderByHash(common.BytesToHash(BlockHash))
 	if header == nil {
 		return fmt.Errorf("failed to get header for block hash 0x%x", BlockHash)
 	}
 
 	s.bc.SetFinalized(header)
+	log.Info("Finalized Block")
+
 	return nil
 }
 

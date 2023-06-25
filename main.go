@@ -44,12 +44,13 @@ func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) 
 	if err != nil {
 		return err
 	}
-	fmt.Println(acc)
+	fmt.Println("No errors")
 
 	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(ChainID), acc.factory, cli, tcli)
 	if terr != nil {
 		return err
 	}
+	fmt.Println("TX FINISHED ON HYPERSDK")
 
 	return nil
 }
@@ -59,6 +60,8 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("No errors")
+
 	trsender := tpriv.PublicKey()
 	tsender := utils.Address(trsender)
 	acc := &account{tpriv, auth.NewED25519Factory(tpriv), trsender, tsender}
@@ -112,17 +115,23 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 
 func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (ids.ID, error) {
 	parser, err := tcli.Parser(context.TODO())
+	if err != nil {
+		fmt.Errorf("Parser failed", err)
+		return ids.Empty, err
+	}
+	fmt.Println("PARSER WORKED")
 	submit, tx, fee, err := cli.GenerateTransaction(
 		context.Background(),
 		parser,
 		nil,
 		&actions.SequencerMsg{
-			Data:        data,
 			ChainId:     chainid,
+			Data:        data,
 			FromAddress: to,
 		},
 		factory,
 	)
+	fmt.Println("Transaction WORKED")
 	if err != nil {
 		fmt.Errorf("It failed", err)
 		return ids.Empty, err
@@ -137,13 +146,14 @@ func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []
 	success, err := tcli.WaitForTransaction(ctx, tx.ID())
 	cancel()
 	if success == true {
-		fmt.Println("SUCCESS")
+		fmt.Println("SUCCESS of Transaction")
 	}
 	return tx.ID(), err
 }
 
 func main() {
-	err := BuildAndSendTransaction("http://192.168.0.230:64204/ext/bc/2GVP5faTRBGtYDJF6VWNHUgqfzP3PgYt1JZNd5JcBzVnyUiSta", "test", []byte("2"))
+	byteArray := []byte{2, 248, 117, 130, 5, 57, 8, 132, 89, 104, 47, 0, 133, 4, 90, 118, 125, 113, 130, 82, 8, 148, 228, 159, 63, 227, 110, 159, 13, 235, 100, 138, 112, 128, 80, 21, 170, 137, 148, 2, 255, 248, 136, 13, 224, 182, 179, 167, 100, 0, 0, 128, 192, 1, 160, 187, 97, 123, 192, 59, 150, 57, 70, 19, 129, 28, 78, 191, 80, 67, 53, 195, 22, 137, 141, 48, 197, 124, 151, 245, 227, 197, 130, 253, 2, 109, 6, 160, 21, 40, 87, 45, 214, 180, 231, 224, 205, 62, 27, 172, 72, 18, 62, 31, 237, 121, 68, 25, 4, 231, 13, 193, 104, 89, 15, 107, 13, 35, 172, 216}
+	err := BuildAndSendTransaction("http://127.0.0.1:9650/ext/bc/2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr", "test", byteArray)
 	if err != nil {
 		panic(err)
 	}

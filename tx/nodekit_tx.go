@@ -44,12 +44,13 @@ func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) 
 	if err != nil {
 		return err
 	}
-	fmt.Println(acc)
+	fmt.Println("No errors")
 
 	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(ChainID), acc.factory, cli, tcli)
 	if terr != nil {
 		return err
 	}
+	fmt.Println("TX FINISHED ON HYPERSDK")
 
 	return nil
 }
@@ -59,6 +60,8 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("No errors")
+
 	trsender := tpriv.PublicKey()
 	tsender := utils.Address(trsender)
 	acc := &account{tpriv, auth.NewED25519Factory(tpriv), trsender, tsender}
@@ -112,17 +115,24 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 
 func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []byte, factory chain.AuthFactory, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCClient) (ids.ID, error) {
 	parser, err := tcli.Parser(context.TODO())
+	if err != nil {
+		fmt.Errorf("Parser failed", err)
+		return ids.Empty, err
+	}
+	fmt.Println("PARSER WORKED")
+	fmt.Println("my txdata :\t %v \n", data)
 	submit, tx, fee, err := cli.GenerateTransaction(
 		context.Background(),
 		parser,
 		nil,
 		&actions.SequencerMsg{
-			Data:        data,
 			ChainId:     chainid,
+			Data:        data,
 			FromAddress: to,
 		},
 		factory,
 	)
+	fmt.Println("Transaction Generated")
 	if err != nil {
 		fmt.Errorf("It failed", err)
 		return ids.Empty, err
@@ -137,7 +147,7 @@ func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []
 	success, err := tcli.WaitForTransaction(ctx, tx.ID())
 	cancel()
 	if success == true {
-		fmt.Println("SUCCESS")
+		fmt.Println("SUCCESS of Transaction")
 	}
 	return tx.ID(), err
 }
