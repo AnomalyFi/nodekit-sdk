@@ -193,9 +193,7 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 	}
 
 	s.executionState = fcEndResp.PayloadStatus.LatestValidHash.Bytes()
-	// res := &executionv1.DoBlockResponse{
-	// 	BlockHash: fcEndResp.PayloadStatus.LatestValidHash.Bytes(),
-	// }
+
 	err = s.FinalizeBlock(ctx, fcEndResp.PayloadStatus.LatestValidHash.Bytes())
 	if err != nil {
 		log.Error("failed to Finalize Block", "err", err)
@@ -205,7 +203,6 @@ func (s *ExecutionServiceServer) DoBlock(ctx context.Context, req *executionv1.D
 	return nil
 }
 
-//TODO might be able to combine Finalize Block into DoBlock because once the block comes through WS it is completely finalized
 func (s *ExecutionServiceServer) FinalizeBlock(ctx context.Context, BlockHash []byte) error {
 	log.Info("Got to Finalize Block")
 	header := s.bc.GetHeaderByHash(common.BytesToHash(BlockHash))

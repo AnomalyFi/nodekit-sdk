@@ -28,29 +28,28 @@ type account struct {
 }
 
 // BuildAndSendTransaction builds and sends a transaction to the NodeKit Subnet with the given chain ID and transaction bytes.
-func BuildAndSendTransaction(jsonRpcEndpoint string, ChainID string, tx []byte) error {
-	nkchainID, err := ids.FromString("2bLP6aabd9Hju4SNnn1dsE4Q8FNrAg3N1zeWmzYFky1yDzoFVr")
+func BuildAndSendTransaction(jsonRpcEndpoint string, primaryChainId string, secondaryChainID string, tx []byte) error {
+	nkchainID, err := ids.FromString(primaryChainId)
 
 	if err != nil {
 		return err
 	}
-	fmt.Println("here")
+
 	cli := rpc.NewJSONRPCClient(DefaultJSONRPCEndpoint)
 	tcli := trpc.NewJSONRPCClient(DefaultJSONRPCEndpoint, nkchainID)
 
 	acc, err := CreateAccount(nkchainID, cli, tcli)
-	fmt.Printf("here3\n")
 
 	if err != nil {
 		return err
 	}
-	fmt.Println("No errors")
+	fmt.Println("Successfully Created Account")
 
-	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(ChainID), acc.factory, cli, tcli)
+	_, terr := BuildAndSignTx(nkchainID, acc.rsender, tx, []byte(secondaryChainID), acc.factory, cli, tcli)
 	if terr != nil {
 		return err
 	}
-	fmt.Println("TX FINISHED ON HYPERSDK")
+	fmt.Println("Tx Finished on Hypersdk")
 
 	return nil
 }
@@ -60,7 +59,6 @@ func CreateAccount(chainID ids.ID, cli *rpc.JSONRPCClient, tcli *trpc.JSONRPCCli
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("No errors")
 
 	trsender := tpriv.PublicKey()
 	tsender := utils.Address(trsender)
@@ -119,8 +117,7 @@ func BuildAndSignTx(chainID ids.ID, to crypto.PublicKey, data []byte, chainid []
 		fmt.Errorf("Parser failed", err)
 		return ids.Empty, err
 	}
-	fmt.Println("PARSER WORKED")
-	fmt.Println("my txdata :\t %v \n", data)
+	fmt.Println("txdata :\t %v \n", data)
 	submit, tx, fee, err := cli.GenerateTransaction(
 		context.Background(),
 		parser,
