@@ -3,10 +3,10 @@ module github.com/AnomalyFi/nodekit-sdk
 go 1.20
 
 require (
+	github.com/AnomalyFi/go-ethereum v0.6.0
 	github.com/AnomalyFi/hypersdk v0.6.0
 	github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230625003339-200cce40fc1b
 	github.com/ava-labs/avalanchego v1.10.1
-	github.com/AnomalyFi/go-ethereum v0.6.0
 	google.golang.org/grpc v1.56.0
 )
 
@@ -26,6 +26,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/ethereum/go-ethereum v1.12.0 // indirect
 	github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gballet/go-libpcsclite v0.0.0-20191108122812-4678299bea08 // indirect

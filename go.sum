@@ -1,7 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
-github.com/AnomalyFi/hypersdk v0.5.0 h1:6qNiMJnPCBrpheHHOOvv3iygu0AL5zLGUeHEMTaApL8=
-github.com/AnomalyFi/hypersdk v0.5.0/go.mod h1:6HehhFepxUsLBxUwnBhak+h7gSNYNdSvkDTOAiWR3kw=
+github.com/AnomalyFi/go-ethereum v0.6.0 h1:ZZNOWvrcgZiaGmyhbw3EiJj35PchQpr8eczPxRTP5Kg=
+github.com/AnomalyFi/go-ethereum v0.6.0/go.mod h1:Ub/MIKwk4Znc68RMFDEOS6nk5n37UE/nsHWBxlbGPt8=
 github.com/AnomalyFi/hypersdk v0.6.0 h1:5GujQVB4fRBKQCBJqF+YSgCz6ymG4gdwIifKgYcTDJk=
 github.com/AnomalyFi/hypersdk v0.6.0/go.mod h1:6HehhFepxUsLBxUwnBhak+h7gSNYNdSvkDTOAiWR3kw=
 github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230625003339-200cce40fc1b h1:yr+pzrGv+MM4KCWfDoXrv2YIlInphW/0BCTHRGCM9ws=
