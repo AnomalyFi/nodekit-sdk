@@ -50,7 +50,6 @@ func NewExecutionServiceServer(eth *eth.Ethereum) *ExecutionServiceServer {
 }
 
 func (s *ExecutionServiceServer) WSBlock(JSONRPCEndpoint string, chainID ids.ID, ctx context.Context, websocketClient *rpc.WebSocketClient) error {
-	fmt.Println("GOT IN")
 	executionState, err := s.InitState()
 	s.executionState = executionState
 

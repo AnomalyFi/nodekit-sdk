@@ -6,7 +6,7 @@ require (
 	github.com/AnomalyFi/hypersdk v0.6.0
 	github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230625003339-200cce40fc1b
 	github.com/ava-labs/avalanchego v1.10.1
-	github.com/ethereum/go-ethereum v1.12.0
+	github.com/AnomalyFi/go-ethereum v0.6.0
 	google.golang.org/grpc v1.56.0
 )
 
@@ -115,7 +115,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/AnomalyFi/nodekit-sdk => /home/anomalyfi/code/nodekit-sdk
+//replace github.com/AnomalyFi/nodekit-sdk => /home/anomalyfi/code/nodekit-sdk
 
-replace github.com/ethereum/go-ethereum => /home/anomalyfi/code/go-ethereum
+//replace github.com/ethereum/go-ethereum => /home/anomalyfi/code/go-ethereum
 //replace github.com/AnomalyFi/hypersdk/examples/tokenvm => /home/anomalyfi/code/nodekit_test/hypersdk/examples/tokenvm
