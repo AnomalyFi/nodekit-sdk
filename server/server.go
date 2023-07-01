@@ -15,13 +15,13 @@ import (
 	"github.com/AnomalyFi/hypersdk/rpc"
 	"github.com/ava-labs/avalanchego/ids"
 
-	"github.com/ethereum/go-ethereum/beacon/engine"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/catalyst"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/AnomalyFi/go-ethereum/beacon/engine"
+	"github.com/AnomalyFi/go-ethereum/common"
+	"github.com/AnomalyFi/go-ethereum/core"
+	"github.com/AnomalyFi/go-ethereum/core/types"
+	"github.com/AnomalyFi/go-ethereum/eth"
+	"github.com/AnomalyFi/go-ethereum/eth/catalyst"
+	"github.com/AnomalyFi/go-ethereum/log"
 )
 
 // executionServiceServer is the implementation of the ExecutionServiceServer interface.
