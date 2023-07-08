@@ -7,11 +7,11 @@ import (
 
 	"github.com/AnomalyFi/hypersdk/chain"
 	"github.com/AnomalyFi/hypersdk/crypto"
-	"github.com/AnomalyFi/hypersdk/examples/tokenvm/actions"
-	"github.com/AnomalyFi/hypersdk/examples/tokenvm/auth"
-	trpc "github.com/AnomalyFi/hypersdk/examples/tokenvm/rpc"
-	"github.com/AnomalyFi/hypersdk/examples/tokenvm/utils"
 	"github.com/AnomalyFi/hypersdk/rpc"
+	"github.com/AnomalyFi/nodekit-seq/actions"
+	"github.com/AnomalyFi/nodekit-seq/auth"
+	trpc "github.com/AnomalyFi/nodekit-seq/rpc"
+	"github.com/AnomalyFi/nodekit-seq/utils"
 	"github.com/ava-labs/avalanchego/ids"
 )
 

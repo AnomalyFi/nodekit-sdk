@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AnomalyFi/go-ethereum v0.6.0
 	github.com/AnomalyFi/hypersdk v0.6.0
-	github.com/AnomalyFi/hypersdk/examples/tokenvm v0.0.0-20230625003339-200cce40fc1b
+	github.com/AnomalyFi/nodekit-seq v0.1.0
 	github.com/ava-labs/avalanchego v1.10.1
 	google.golang.org/grpc v1.56.0
 )
