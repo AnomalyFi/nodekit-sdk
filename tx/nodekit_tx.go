@@ -106,16 +106,16 @@ func CreateAccount(ctx context.Context, chainID ids.ID, cli *rpc.JSONRPCClient, 
 	}
 
 	if err := scli.RegisterTx(tx); err != nil {
-		return false, ids.Empty, err
+		return nil, err
 	}
 	var res *chain.Result
 	for {
 		txID, dErr, result, err := scli.ListenTx(ctx)
 		if dErr != nil {
-			return false, ids.Empty, dErr
+			return nil, dErr
 		}
 		if err != nil {
-			return false, ids.Empty, err
+			return nil, err
 		}
 		if txID != tx.ID() {
 			continue
@@ -124,7 +124,7 @@ func CreateAccount(ctx context.Context, chainID ids.ID, cli *rpc.JSONRPCClient, 
 		break
 	}
 
-	utils.Outf("%s {{yellow}}txID:{{/}} %s\n", res.Success, tx.ID())
+	fmt.Println("%s {{yellow}}txID:{{/}} %s\n", res.Success, tx.ID().String())
 
 	return acc, nil
 }
@@ -151,20 +151,20 @@ func BuildAndSignTx(chainID ids.ID, to ed25519.PublicKey, data []byte, chainid [
 	)
 	if err != nil {
 		fmt.Errorf("It failed", err)
-		return nil, err
+		return ids.Empty, err
 	}
 
 	if err := scli.RegisterTx(tx); err != nil {
-		return false, ids.Empty, err
+		return ids.Empty, err
 	}
 	var res *chain.Result
 	for {
 		txID, dErr, result, err := scli.ListenTx(ctx)
 		if dErr != nil {
-			return false, ids.Empty, dErr
+			return ids.Empty, dErr
 		}
 		if err != nil {
-			return false, ids.Empty, err
+			return ids.Empty, err
 		}
 		if txID != tx.ID() {
 			continue
@@ -173,7 +173,7 @@ func BuildAndSignTx(chainID ids.ID, to ed25519.PublicKey, data []byte, chainid [
 		break
 	}
 
-	utils.Outf("%s {{yellow}}txID:{{/}} %s\n", res.Success, tx.ID())
+	fmt.Println("%s {{yellow}}txID:{{/}} %s\n", res.Success, tx.ID().String())
 
 	return tx.ID(), err
 }
