@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/AnomalyFi/hypersdk v0.8.0
-	github.com/AnomalyFi/nodekit-seq v0.3.0
+	github.com/AnomalyFi/nodekit-seq v0.7.0
 	github.com/ava-labs/avalanchego v1.10.10
 	google.golang.org/grpc v1.56.0
 )
@@ -45,6 +45,7 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/supranational/blst v0.3.11 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220614013038-64ee5596c38a // indirect
+	github.com/tidwall/btree v1.7.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
